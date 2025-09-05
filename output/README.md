@@ -1,11 +1,11 @@
 ---
 base_model: Qwen/Qwen2.5-VL-7B-Instruct
-library_name: peft
+library_name: transformers
 model_name: output
 tags:
 - generated_from_trainer
-- sft
 - trl
+- sft
 licence: license
 ---
 
@@ -34,9 +34,8 @@ This model was trained with SFT.
 
 ### Framework versions
 
-- PEFT 0.15.2
 - TRL: 0.19.0
-- Transformers: 4.53.0.dev0
+- Transformers: 4.55.0
 - Pytorch: 2.7.1
 - Datasets: 3.6.0
 - Tokenizers: 0.21.1

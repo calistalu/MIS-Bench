@@ -1,0 +1,54 @@
+The full transcript: "{transcript}"
+
+For the provided video and full transcript, assign a numerical rating from 1 to 5 for each of the following eight Facilitative Interpersonal Skills (FIS) categories:
+1. Verbal Fluency
+2. Hope & Positive Expectations
+3. Persuasiveness
+4. Emotional Expression
+5. Warmth, Acceptance & Understanding
+6. Empathy
+7. Alliance Bond Capacity
+8. Alliance Rupture–Repair Responsiveness
+For each score, include a short explanation that justifies the score by referencing specific observations from the video (e.g., facial expressions, tone, gestures) and/or quoting or summarizing relevant parts of the transcript.
+Then, provide a **concise overall suggestion** to the clinician on how to improve their interpersonal response.
+
+Output:
+Return **only** a valid JSON object with this exact structure:
+```json
+{
+  "scores": {
+    "verbal_fluency": {
+      "score": float,
+      "explanation": string
+    },
+    "hope_and_pe": {
+      "score": float,
+      "explanation": string
+    },
+    "persuasiveness": {
+      "score": float,
+      "explanation": string
+    },
+    "emotional_expression": {
+      "score": float,
+      "explanation": string
+    },
+    "wau": {
+      "score": float,
+      "explanation": string
+    },
+    "empathy": {
+      "score": float,
+      "explanation": string
+    },
+    "abc": {
+      "score": float,
+      "explanation": string
+    },
+    "arrr": {
+      "score": float,
+      "explanation": string
+    }
+  }
+  "suggestion": string
+}

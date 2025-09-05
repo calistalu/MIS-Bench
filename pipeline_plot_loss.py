@@ -4,7 +4,7 @@ matplotlib.use("Agg")          # 1️⃣ 无显示环境专用后端
 import matplotlib.pyplot as plt
 
 # 读取日志
-with open("./output/checkpoint-1380/trainer_state.json") as f:
+with open("./output/checkpoint-24/trainer_state.json") as f:
     state = json.load(f)
 
 train_loss, eval_loss, steps = [], [], []
@@ -18,7 +18,7 @@ for entry in state["log_history"]:
 # 画图
 plt.figure(figsize=(10, 5))
 plt.plot(steps[:len(train_loss)], train_loss, label="Train Loss")
-plt.plot(steps[-len(eval_loss):], eval_loss, label="Eval Loss")
+#plt.plot(steps[-len(eval_loss):], eval_loss, label="Eval Loss")
 plt.xlabel("Step")
 plt.ylabel("Loss")
 plt.title("Loss Curve")
@@ -26,5 +26,6 @@ plt.legend()
 plt.grid(True)
 
 # 2️⃣ 保存为文件（PNG、300 dpi）
-plt.savefig("loss_curve.png", dpi=300, bbox_inches="tight")
+plt.savefig("loss_curve_24.png", dpi=300, bbox_inches="tight")
 plt.close()                    # 释放内存
+print("Loss curve saved as loss_curve.png")

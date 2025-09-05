@@ -2,3 +2,9 @@ FISclipped/
 temp.wav/
 output_epoch_60/
 .cache/
+output-cot/
+output-finetune/
+output/
+TRACT/
+my_dataset
+data/

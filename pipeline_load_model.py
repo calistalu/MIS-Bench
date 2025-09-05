@@ -12,7 +12,7 @@ from peft import LoraConfig, get_peft_model
 from trl import SFTConfig, SFTTrainer
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 from decord import VideoReader, cpu
-from vision_process import process_vision_info
+from utils.vision_process import process_vision_info
 import subprocess
 import librosa
 from tqdm import tqdm
@@ -289,7 +289,7 @@ def main():
 
     rows = []
 
-    model.load_adapter("./output")
+    #model.load_adapter("./output")
     for sample_data in tqdm(test_ds, desc="Processing test dataset"):
         sample_data = prune_messages(sample_data["messages"])
         generated_text, actual_answer = text_generator(sample_data, processor=processor, model=model)

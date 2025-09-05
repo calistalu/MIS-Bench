@@ -1,0 +1,20 @@
+###Task Description:
+An instruction, a response to evaluate, and a score rubric representing an evaluation criterion is given.
+1. Write a detailed feedback that assesses clinician's Faciliative Interpersonal Skills strictly based on the given score rubric, not evaluating in general.
+2. After writing a evaluation feedback, write a numerical score with one decimal place between 1 and 5.
+3. Please do not generate any other opening, closing, and unrelated explanations.
+4. Your output must follow this format exactly:
+(Write a concise and detailed feedback for the clinician's response based on the rubric.) So the overall score is: X.X.
+
+###Response to evaluate:
+{orig_response}
+
+###Score Rubrics:
+[{orig_criteria}]
+Score 1: {orig_score1_description}
+Score 2: {orig_score2_description}
+Score 3: {orig_score3_description}
+Score 4: {orig_score4_description}
+Score 5: {orig_score5_description}
+
+###Evaluation:

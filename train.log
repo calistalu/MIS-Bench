@@ -1,0 +1,216 @@
+ipex flag is deprecated, will be removed in Accelerate v1.10. From 2.7.0, PyTorch has all needed optimizations for Intel CPU and XPU.
+The following values were not passed to `accelerate launch` and had defaults used instead:
+		More than one GPU was found, enabling multi-GPU training.
+		If this was unintended please pass in `--num_processes=1`.
+	`--num_machines` was set to a value of `1`
+	`--mixed_precision` was set to a value of `'no'`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:07,  1.83s/it]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:07,  1.88s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:03<00:05,  2.00s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:04<00:06,  2.03s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:06<00:04,  2.07s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:06<00:04,  2.10s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:08<00:02,  2.12s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:08<00:00,  1.42s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:08<00:00,  1.70s/it]
+Loading checkpoint shards:  80%|████████  | 4/5 [00:08<00:02,  2.12s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:08<00:00,  1.42s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:08<00:00,  1.70s/it]
+You have video processor config saved in `preprocessor.json` file which is deprecated. Video processor configs should be saved in their own `video_preprocessor.json` file. You can rename the file or load and save the processor back which renames it automatically. Loading from `preprocessor.json` will be removed in v5.0.
+You have video processor config saved in `preprocessor.json` file which is deprecated. Video processor configs should be saved in their own `video_preprocessor.json` file. You can rename the file or load and save the processor back which renames it automatically. Loading from `preprocessor.json` will be removed in v5.0.
+Raw dataset loaded with 7968 examples.
+Raw dataset loaded with 7968 examples.
+First message in dataset: [{'role': 'system', 'content': [{'type': 'text', 'text': "You are a state‐of‐the‐art vision‐language model. You will be shown: 1) A short video clip capturing a clinician responding to a patient's challenge situation. 2) The full transcript of the clinician response. 3) the score rubric. Your task is to analyze how the clinician responds to the patient’s emotional and interpersonal cues. For each of the eight Facilitative Interpersonal Skills (FIS) categories below, assign a numerical rating with one decimal place from 1 (low) to 5 (high) following the detailed rubric."}]}, {'role': 'user', 'content': [{'type': 'video', 'video': 'data/FIS996/AB0511_T1_Bethany.mp4', 'total_pixels': 16056320, 'min_pixels': 12544}, {'type': 'text', 'text': '###Task Description:\nAn instruction, a response to evaluate, and a score rubric representing an evaluation criterion is given.\nReutrn only a numerical score with one decimal place between 1 and 5. You should refer to the score rubric.\nPlease do not generate any other opening, closing, and explanations.\n\n###Response to evaluate:\nBethany, can you tell me a bit more about this nervousness? say how does this feel? In your body where do you feel that nervousness? Is it heaviness? Is it open or wide or tight? If you want just close your eyes and then try to look a bit inside you. Where do you feel it? What is it like? What is it like to feel this?\n\n###Score Rubrics:\n[ Verbal Fluency.  This item is a rating of the extent to which the participant is verbally capable and at-ease in communicating.  The response is delivered in a relaxed manner and without significant signs of anxiety (e.g., broken speech, extended and awkward pauses, and clarity in communication).  However, the content of what is said is not rated, but rather how it is spoken. ]\nScore 1: The participant is at great ease and communicates ideas with no anxiety, reflecting a desire to "approach" the other.  The verbal quality of the response may have a "melodic," rhythmical quality and is easy to follow; the response is fluent.\nScore 2: The response is fluent, and there is little that is difficult to follow. \nScore 3: A moderate level of verbal fluency indicates that the participant\'s response is conversational and mostly easy to follow. \nScore 4: Fluency is disrupted by the participant’s anxiety and avoidance of verbal expression.  The respondent may be obviously anxious and struggling to formulate a response. At times, the communication may be choppy, even halting. [Note: In some rare instances a response could represent an avoidance of the interpersonal situation through anxious rambling.  It would need to be clear that the particpant’s ramblings are the result of anxiety over communicating with another].\nScore 5: The participant has great difficulty verbalizing a response (e.g., obviously anxious, sounds shaky or timid), reflecting a clear avoidance or anxiety.  The participant may lack confidence and is clearly uncertain or even difficult to follow.\n\n###Score:'}]}]
+Using auto half precision backend
+Starting training...
+First message in dataset: [{'role': 'system', 'content': [{'type': 'text', 'text': "You are a state‐of‐the‐art vision‐language model. You will be shown: 1) A short video clip capturing a clinician responding to a patient's challenge situation. 2) The full transcript of the clinician response. 3) the score rubric. Your task is to analyze how the clinician responds to the patient’s emotional and interpersonal cues. For each of the eight Facilitative Interpersonal Skills (FIS) categories below, assign a numerical rating with one decimal place from 1 (low) to 5 (high) following the detailed rubric."}]}, {'role': 'user', 'content': [{'type': 'video', 'video': 'data/FIS996/AB0511_T1_Bethany.mp4', 'total_pixels': 16056320, 'min_pixels': 12544}, {'type': 'text', 'text': '###Task Description:\nAn instruction, a response to evaluate, and a score rubric representing an evaluation criterion is given.\nReutrn only a numerical score with one decimal place between 1 and 5. You should refer to the score rubric.\nPlease do not generate any other opening, closing, and explanations.\n\n###Response to evaluate:\nBethany, can you tell me a bit more about this nervousness? say how does this feel? In your body where do you feel that nervousness? Is it heaviness? Is it open or wide or tight? If you want just close your eyes and then try to look a bit inside you. Where do you feel it? What is it like? What is it like to feel this?\n\n###Score Rubrics:\n[ Verbal Fluency.  This item is a rating of the extent to which the participant is verbally capable and at-ease in communicating.  The response is delivered in a relaxed manner and without significant signs of anxiety (e.g., broken speech, extended and awkward pauses, and clarity in communication).  However, the content of what is said is not rated, but rather how it is spoken. ]\nScore 1: The participant is at great ease and communicates ideas with no anxiety, reflecting a desire to "approach" the other.  The verbal quality of the response may have a "melodic," rhythmical quality and is easy to follow; the response is fluent.\nScore 2: The response is fluent, and there is little that is difficult to follow. \nScore 3: A moderate level of verbal fluency indicates that the participant\'s response is conversational and mostly easy to follow. \nScore 4: Fluency is disrupted by the participant’s anxiety and avoidance of verbal expression.  The respondent may be obviously anxious and struggling to formulate a response. At times, the communication may be choppy, even halting. [Note: In some rare instances a response could represent an avoidance of the interpersonal situation through anxious rambling.  It would need to be clear that the particpant’s ramblings are the result of anxiety over communicating with another].\nScore 5: The participant has great difficulty verbalizing a response (e.g., obviously anxious, sounds shaky or timid), reflecting a clear avoidance or anxiety.  The participant may lack confidence and is clearly uncertain or even difficult to follow.\n\n###Score:'}]}]
+Starting training...
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:54: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  ALLREDUCE = partial(_ddp_comm_hook_wrapper, comm_hook=default.allreduce_hook)
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:55: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  FP16_COMPRESS = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:58: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BF16_COMPRESS = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:61: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  QUANTIZE_PER_TENSOR = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:64: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  QUANTIZE_PER_CHANNEL = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:67: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  POWER_SGD = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:74: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  POWER_SGD_RANK2 = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:80: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BATCHED_POWER_SGD = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:85: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BATCHED_POWER_SGD_RANK2 = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:90: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  NOOP = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:54: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  ALLREDUCE = partial(_ddp_comm_hook_wrapper, comm_hook=default.allreduce_hook)
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:55: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  FP16_COMPRESS = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:58: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BF16_COMPRESS = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:61: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  QUANTIZE_PER_TENSOR = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:64: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  QUANTIZE_PER_CHANNEL = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:67: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  POWER_SGD = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:74: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  POWER_SGD_RANK2 = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:80: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BATCHED_POWER_SGD = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:85: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  BATCHED_POWER_SGD_RANK2 = partial(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/algorithms/ddp_comm_hooks/__init__.py:90: FutureWarning: functools.partial will be a method descriptor in future Python versions; wrap it in enum.member() if you want to preserve the old behavior
+  NOOP = partial(
+***** Running training *****
+  Num examples = 7,968
+  Num Epochs = 2
+  Instantaneous batch size per device = 2
+  Total train batch size (w. parallel, distributed & accumulation) = 4
+  Gradient Accumulation steps = 1
+  Total optimization steps = 3,984
+  Number of trainable parameters = 2,523,136
+  0%|          | 0/3984 [00:00<?, ?it/s]qwen-vl-utils using decord to read video.
+qwen-vl-utils using decord to read video.
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`...
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`...
+`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+`loss_type=None` was set in the config but it is unrecognised.Using the default loss: `ForCausalLMLoss`.
+  0%|          | 1/3984 [00:36<40:03:17, 36.20s/it][step      1] train_loss = 35.9584
+                                                   {'loss': 35.9584, 'grad_norm': 10.625444412231445, 'learning_rate': 2e-05, 'num_tokens': 22052.0, 'mean_token_accuracy': 0.010386429727077484, 'epoch': 0.0}
+  0%|          | 1/3984 [00:36<40:03:17, 36.20s/it]  0%|          | 2/3984 [01:00<32:07:45, 29.05s/it]  0%|          | 3/3984 [01:27<31:03:53, 28.09s/it]  0%|          | 4/3984 [01:51<29:16:06, 26.47s/it]  0%|          | 5/3984 [02:17<29:06:57, 26.34s/it]  0%|          | 6/3984 [02:40<28:02:21, 25.37s/it]  0%|          | 7/3984 [03:04<27:19:38, 24.74s/it]  0%|          | 8/3984 [03:31<28:14:36, 25.57s/it]  0%|          | 9/3984 [04:00<29:21:41, 26.59s/it]  0%|          | 10/3984 [04:28<29:45:05, 26.95s/it]  0%|          | 11/3984 [04:55<29:44:17, 26.95s/it]  0%|          | 12/3984 [05:23<30:13:00, 27.39s/it]  0%|          | 13/3984 [05:47<29:07:46, 26.41s/it]  0%|          | 14/3984 [06:15<29:33:42, 26.81s/it]  0%|          | 15/3984 [06:42<29:32:35, 26.80s/it]  0%|          | 16/3984 [07:06<28:50:46, 26.17s/it]  0%|          | 17/3984 [07:29<27:45:28, 25.19s/it]  0%|          | 18/3984 [07:50<26:23:09, 23.95s/it]  0%|          | 19/3984 [08:17<27:06:45, 24.62s/it]  1%|          | 20/3984 [08:46<28:44:56, 26.11s/it][rank0]: Traceback (most recent call last):
+[rank0]:   File "/data2/yl12006/PaddleOCR/FIS/pipeline_finetune.py", line 447, in <module>
+[rank0]:     main()
+[rank0]:     ~~~~^^
+[rank0]:   File "/data2/yl12006/PaddleOCR/FIS/pipeline_finetune.py", line 440, in main
+[rank0]:     trainer.train()
+[rank0]:     ~~~~~~~~~~~~~^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/trainer.py", line 2238, in train
+[rank0]:     return inner_training_loop(
+[rank0]:         args=args,
+[rank0]:     ...<2 lines>...
+[rank0]:         ignore_keys_for_eval=ignore_keys_for_eval,
+[rank0]:     )
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/trainer.py", line 2582, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/trl/trainer/sft_trainer.py", line 864, in training_step
+[rank0]:     return super().training_step(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/trainer.py", line 3796, in training_step
+[rank0]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/trl/trainer/sft_trainer.py", line 818, in compute_loss
+[rank0]:     (loss, outputs) = super().compute_loss(
+[rank0]:                       ~~~~~~~~~~~~~~~~~~~~^
+[rank0]:         model, inputs, return_outputs=True, num_items_in_batch=num_items_in_batch
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/trainer.py", line 3884, in compute_loss
+[rank0]:     outputs = model(**inputs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/parallel/distributed.py", line 1637, in forward
+[rank0]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank0]:          ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/parallel/distributed.py", line 1464, in _run_ddp_forward
+[rank0]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank0]:            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/accelerate/utils/operations.py", line 818, in forward
+[rank0]:     return model_forward(*args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/accelerate/utils/operations.py", line 806, in __call__
+[rank0]:     return convert_to_fp32(self.model_forward(*args, **kwargs))
+[rank0]:                            ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/peft/peft_model.py", line 1757, in forward
+[rank0]:     return self.base_model(
+[rank0]:            ~~~~~~~~~~~~~~~^
+[rank0]:         input_ids=input_ids,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^
+[rank0]:     ...<6 lines>...
+[rank0]:         **kwargs,
+[rank0]:         ^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/peft/tuners/tuners_utils.py", line 193, in forward
+[rank0]:     return self.model.forward(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/utils/generic.py", line 959, in wrapper
+[rank0]:     output = func(self, *args, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py", line 1532, in forward
+[rank0]:     loss = self.loss_function(logits=logits, labels=labels, vocab_size=self.config.vocab_size)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/loss/loss_utils.py", line 67, in ForCausalLMLoss
+[rank0]:     loss = fixed_cross_entropy(logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/transformers/loss/loss_utils.py", line 36, in fixed_cross_entropy
+[rank0]:     loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)
+[rank0]:   File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/nn/functional.py", line 3494, in cross_entropy
+[rank0]:     return torch._C._nn.cross_entropy_loss(
+[rank0]:            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[rank0]:         input,
+[rank0]:         ^^^^^^
+[rank0]:     ...<4 lines>...
+[rank0]:         label_smoothing,
+[rank0]:         ^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 7.17 GiB. GPU 0 has a total capacity of 47.40 GiB of which 7.13 GiB is free. Process 37460 has 7.79 GiB memory in use. Including non-PyTorch memory, this process has 27.97 GiB memory in use. Process 2301641 has 4.48 GiB memory in use. Of the allocated memory 21.69 GiB is allocated by PyTorch, and 5.57 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  1%|          | 20/3984 [09:08<30:11:29, 27.42s/it]
+[rank0]:[W831 10:05:39.722790681 ProcessGroupNCCL.cpp:1479] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+W0831 10:05:41.040000 2295051 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2295194 closing signal SIGTERM
+E0831 10:05:41.304000 2295051 site-packages/torch/distributed/elastic/multiprocessing/api.py:874] failed (exitcode: 1) local_rank: 0 (pid: 2295193) of binary: /home/yl12006/.conda/envs/paddle/bin/python3.13
+Traceback (most recent call last):
+  File "/home/yl12006/.conda/envs/paddle/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
+    args.func(args)
+    ~~~~~~~~~^^^^^^
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/accelerate/commands/launch.py", line 1190, in launch_command
+    multi_gpu_launcher(args)
+    ~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/accelerate/commands/launch.py", line 815, in multi_gpu_launcher
+    distrib_run.run(args)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/run.py", line 883, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 139, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/yl12006/.conda/envs/paddle/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 270, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/data2/yl12006/PaddleOCR/FIS/pipeline_finetune.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-08-31_10:05:41
+  host      : hw3242-gpu1
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2295193)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

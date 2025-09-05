@@ -7,17 +7,18 @@ import numpy as np
 import pandas as pd
 from datasets import Dataset, DatasetDict, load_from_disk
 from sklearn.model_selection import train_test_split
-from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor, Qwen2VLProcessor, BitsAndBytesConfig
+from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
 from trl import SFTConfig, SFTTrainer
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 from decord import VideoReader, cpu
-from vision_process import process_vision_info
+from utils.vision_process import process_vision_info
 import subprocess
 import librosa
 from tqdm import tqdm
 from accelerate import Accelerator
 from transformers import TrainerCallback, TrainerState, TrainerControl
+from datasets import load_dataset
 
 def download_video(url, dest_path):
     response = requests.get(url, stream=True)
@@ -53,52 +54,43 @@ def get_video_frames(video_path, num_frames=32, cache_dir='.cache'):
     np.save(ts_cache, timestamps)
     return video_file_path, frames, timestamps
 
-def extract_audio(video_path, audio_path="temp.wav"):
-    cmd = ["ffmpeg", "-y", "-i", video_path, "-vn", 
-           "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", audio_path]
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return audio_path
 
-# 利用 Whisper 处理长音频
+def format_example(example, user_template):
+    # Fill the user prompt template
+    # print(f"Extracted text for {example['video']}")
+    # print(example["orig_score1_description"])
 
-def transcribe_long_audio(audio_path,
-                          model,
-                          processor,
-                          chunk_length_s=30,
-                          chunk_overlap_s=2):
-    # 读取整段音频
-    speech, sr = librosa.load(audio_path, sr=16000, mono=True)
-    total_samples = speech.shape[0]
-    chunk_size = chunk_length_s * sr
-    overlap = chunk_overlap_s * sr
+    user_prompt_filled = user_template.format(
+        orig_instruction=example["orig_instruction"],
+        orig_response=example["orig_response"],
+        orig_criteria=example["orig_criteria"],
+        orig_score1_description=example["orig_score1_description"],
+        orig_score2_description=example["orig_score2_description"],
+        orig_score3_description=example["orig_score3_description"],
+        orig_score4_description=example["orig_score4_description"],
+        orig_score5_description=example["orig_score5_description"],
+    )
 
-    transcripts = []
-    start = 0
-    while start < total_samples:
-        end = min(start + chunk_size, total_samples)
-        chunk = speech[start:end]
-
-        # 处理 chunk
-        inputs = processor(chunk,
-                           sampling_rate=sr,
-                           return_tensors="pt")
-        # cast to fp16 if model was loaded in fp16
-        inputs = {k: v.half().cuda() for k, v in inputs.items()}
-
-        # 你也可以加上 language="en", task="translate" 等参数
-        ids = model.generate(**inputs)
-        text = processor.batch_decode(ids,
-                                      skip_special_tokens=True)[0]
-        transcripts.append(text.strip())
-        del inputs, ids
-        torch.cuda.empty_cache()
-
-        # 滑动窗口：下一个 chunk 开始点
-        start += chunk_size - overlap
-
-    # 拼接所有片段，去掉重复
-    full_transcript = " ".join(transcripts)
-    return full_transcript
+    # Compose the message structure
+    messages = [
+        {
+            "role": "system",
+            "content": [{"type": "text", "text": example["orig_instruction"]}],
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "video",
+                    "video": example["video_path"],
+                    "total_pixels": TOTAL_PIXELS,
+                    "min_pixels": MIN_PIXELS,
+                },
+                {"type": "text", "text": user_prompt_filled},
+            ],
+        }
+    ]
+    return {"messages": messages}
 
 def prune_messages(raw_messages):
     """
@@ -126,38 +118,15 @@ def prune_messages(raw_messages):
         pruned.append(new_msg)
     return pruned
 
-def text_generator(sample_data):
-    massages = sample_data
-    text = processor.apply_chat_template(
-        sample_data[0:2], tokenize=False, add_generation_prompt=True
-    )
-    image_inputs, video_inputs, video_kwargs = process_vision_info([massages], return_video_kwargs=True)
-  
-    fps = video_kwargs['fps']
-    inputs = processor(
-        text=[text],
-        images=image_inputs,
-        videos=video_inputs,
-        fps=fps,
-        padding=True,
-        return_tensors="pt"
-    ).to(model.device)
 
-    outs = model.generate(**inputs, max_new_tokens=MAX_SEQ_LEN)
-    gen = outs[0][inputs.input_ids.shape[-1]:]
-    result = processor.batch_decode([gen], skip_special_tokens=True, clean_up_tokenization_spaces=True)[0]
-    actual_answer = sample_data[2]["content"][0]["text"]
-    del image_inputs, video_inputs, inputs, outs, gen
-    torch.cuda.empty_cache()
-    torch.cuda.ipc_collect()
-    return result, actual_answer
 
 def create_collate_fn(processor):
     def collate_fn(examples):
         texts = []
         video_inputs = []
         fps_list = []
-        examples = [prune_messages(example["messages"]) for example in examples]  # 清理冗余字段
+
+        # examples = [prune_messages(example["messages"]) for example in examples]  # 清理冗余字段
         for i, example in enumerate(examples):
             message_list = example
             # 构造对话模板文本
@@ -169,25 +138,17 @@ def create_collate_fn(processor):
             video_inputs.append(video_frames)               # 累积帧列表
             fps = video_kwargs.get('fps', None)             # 单个样本的 fps
             fps_list.append(fps[0])                            # 收集到列表里
-                         
-            # if video_inputs is not None:
-            #     t, c, h, w = video_inputs[0].shape
-            #     print(f"Video tensor shape: T={t}, C={c}, H={h}, W={w}")
+            # print("len(texts):", len(texts))
+            # print(i)
+            # print("len(video_frames):", len(video_frames))
+            # print("len(video_inputs):", len(video_inputs))
+                            
 
-            #     # 查看模型 patch size
-            #     ps = processor.feature_extractor.patch_size
-            #     print(f"Processor patch_size: {ps}")
-
-            #     # 计算网格
-            #     p_h, p_w = (ps, ps) if isinstance(ps, int) else ps
-            #     grid_h, grid_w = h // p_h, w // p_w
-            #     print(f"Grid: {grid_h}×{grid_w} patches per frame, total_visual_tokens = T × {grid_h*grid_w}")
-                        
-
-        # print(len(texts), len(video_inputs), len(fps_list))
+        #print(len(texts), len(video_inputs), len(fps_list))
         # 统一调用 processor，注意 videos 和 fps 要对应 samples 数量
         batch = processor(
             text=texts,
+            images=image_inputs,
             videos=video_inputs,
             fps=fps_list,
             padding=True,
@@ -197,9 +158,68 @@ def create_collate_fn(processor):
         labels = batch["input_ids"].clone()
         labels[labels == processor.tokenizer.pad_token_id] = -100
         batch["labels"] = labels
+        # print(batch.keys())
+        # print(batch["input_ids"])
+        # print(batch["labels"])
+        # print("=== Input IDs Decoded ===")
+        # for text in processor.tokenizer.batch_decode(batch["input_ids"], skip_special_tokens=False):
+        #     print(text)
+        #     print("-" * 50)
+
+        # # 打印 labels 对应的文本（把 -100 先还原成 pad_token_id，不然 decode 不出来）
+        # print("=== Labels Decoded ===")
+        # labels_for_decode = batch["labels"].clone()
+        # labels_for_decode[labels_for_decode == -100] = processor.tokenizer.pad_token_id
+        # for text in processor.tokenizer.batch_decode(labels_for_decode, skip_special_tokens=False):
+        #     print(text)
+        #     print("-" * 50)
         return batch
 
     return collate_fn
+
+# def create_collate_fn(processor):
+#     def collate_fn(examples):
+#         texts = []
+#         video_inputs = []
+#         fps_list = []
+#         # examples = [prune_messages(example["messages"]) for example in examples]  # 清理冗余字段
+#         for i, example in enumerate(examples):
+#             message_list = example
+#             # 构造对话模板文本
+#             text = processor.apply_chat_template(message_list, tokenize=False, add_generation_prompt=False)
+#             texts.append(text)
+#             # 处理视频
+#             image_inputs, video_frames, video_kwargs = process_vision_info([message_list], return_video_kwargs=True)
+           
+#             video_inputs.append(video_frames)               # 累积帧列表
+#             fps = video_kwargs.get('fps', None)             # 单个样本的 fps
+#             fps_list.append(fps[0])                            # 收集到列表里
+#             # print("len(texts):", len(texts))
+#             print(i)
+#             print("len(video_frames):", len(video_frames))
+#             print("len(video_inputs):", len(video_inputs))
+                            
+
+#         print(len(texts), len(video_inputs), len(fps_list))
+#         # 统一调用 processor，注意 videos 和 fps 要对应 samples 数量
+#         batch = processor(
+#             text=texts,
+#             images=image_inputs,
+#             videos=video_inputs,
+#             fps=fps_list,
+#             padding=True,
+#             return_tensors="pt"
+#         )
+#         # 构造 labels
+#         labels = batch["input_ids"].clone()
+#         labels[labels == processor.tokenizer.pad_token_id] = -100
+#         batch["labels"] = labels
+#         print(batch.keys())
+#         print(batch["input_ids"])
+#         print(batch["labels"])
+#         return batch
+
+#     return collate_fn
 
 # 配置参数集中管理（全部大写常量）
 DEVICE = "cuda"
@@ -207,26 +227,26 @@ CACHE_WHISPER = "./.cache/whisper"
 WHISPER_MODEL_NAME = "openai/whisper-medium"
 CACHE_VLM = "./.cache/qwen2.5"
 VLM_MODEL_NAME = "Qwen/Qwen2.5-VL-7B-Instruct"
-CODING_CSV = "coding.csv"
+CODING_CSV = "data/coding.csv"
 OUTPUT_CSV = "fisclipt_scores.csv"
-SYSTEM_PROMPT = "system_prompt.txt"
-USER_PROMPT = "user_prompt.txt"
-VIDEO_FOLDER = "FISclipped"
+SYSTEM_PROMPT = "prompt/system_template.txt"
+USER_PROMPT = "prompt/user_template.txt"
+VIDEO_FOLDER = "data/FISclipped"
 TOTAL_PIXELS = 20480*28*28
 MIN_PIXELS = 16*28*28
 MAX_SEQ_LEN = 512
 CHUNK_LENGTH_S = 30
 CHUNK_OVERLAP_S = 2
 
-EPOCHS = 60
+EPOCHS = 2
 BATCH_SIZE = 2
 GRADIENT_CHECKPOINTING = True  # Tradeoff between memory efficiency and computation time.
 USE_REENTRANT = False
 OPTIM = "paged_adamw_32bit"
 LEARNING_RATE = 2e-5
 LOGGING_STEPS = 50
-EVAL_STEPS = 50
-SAVE_STEPS = 50
+EVAL_STEPS = 500
+SAVE_STEPS = 500
 EVAL_STRATEGY = "steps"
 SAVE_STRATEGY = "steps"
 METRIC_FOR_BEST_MODEL="eval_loss"
@@ -235,7 +255,6 @@ MAX_GRAD_NORM = 1
 WARMUP_STEPS = 0
 DATASET_KWARGS={"skip_prepare_dataset": True} # We have to put for VLMs
 REMOVE_UNUSED_COLUMNS = False # VLM thing
-
 from transformers import TrainerCallback, TrainerState, TrainerControl
 
 class LossPrinterCallback(TrainerCallback):
@@ -312,19 +331,51 @@ def main():
         vlm_model_name,
         cache_dir=cache_vlm,
         quantization_config=bnb_config,
-        device_map={"": local_rank},
     )
     processor = AutoProcessor.from_pretrained(vlm_model_name, cache_dir=cache_vlm, use_fast=True)
     processor.save_pretrained(cache_vlm)
 
     data_collator = create_collate_fn(processor)
 
-    dataset = load_from_disk("my_dataset")
+    # dataset = load_from_disk("my_dataset")
+    # splits = dataset.train_test_split(test_size=0.2, seed=42)
+    # train_ds = splits["train"]
+    # temp_ds = splits["test"].train_test_split(test_size=0.5, seed=42)
+    # eval_ds = temp_ds["train"]
+    # test_ds = temp_ds["test"]
+
+    raw_dataset = load_dataset("CalistaLu/FIS-Full-Dataset", split="train")
+    print(f"Raw dataset loaded with {len(raw_dataset)} examples.")
+
+   
+    # Load templates
+    with open(USER_PROMPT, "r") as f:
+        user_template = f.read().strip()
+
+    # Format each example into message format
+    formatted_dataset = raw_dataset.map(
+        lambda example: format_example(example,user_template)
+    )
+
+    # Remove extra columns and keep only "messages"
+    dataset = formatted_dataset.remove_columns([
+        col for col in formatted_dataset.column_names if col != "messages"
+    ])
+    #打印第一个message
     splits = dataset.train_test_split(test_size=0.2, seed=42)
     train_ds = splits["train"]
     temp_ds = splits["test"].train_test_split(test_size=0.5, seed=42)
     eval_ds = temp_ds["train"]
     test_ds = temp_ds["test"]
+    
+    train_ds = [prune_messages(data["messages"]) for data in dataset]
+    eval_ds = [prune_messages(data["messages"]) for data in eval_ds]
+    test_ds = [prune_messages(data["messages"]) for data in test_ds]
+    print("First message in dataset:", train_ds[0])
+
+    
+
+
 
     # PEFT 配置
     peft_config = LoraConfig(
@@ -346,7 +397,7 @@ def main():
 
     # SFT 训练参数
     training_args = SFTConfig(
-        output_dir="./output",
+        output_dir="./output-finetune",
         num_train_epochs=EPOCHS,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=1,
@@ -361,7 +412,7 @@ def main():
         save_strategy=SAVE_STRATEGY,
         save_steps=SAVE_STEPS,
         metric_for_best_model=METRIC_FOR_BEST_MODEL,
-        greater_is_better=False,  # eval_loss 越小越好
+        greater_is_better=None,  # eval_loss 越小越好
         load_best_model_at_end=LOAD_BEST_MODEL_AT_END,
         max_grad_norm=MAX_GRAD_NORM,
         warmup_steps=WARMUP_STEPS,
@@ -383,11 +434,7 @@ def main():
         processing_class=processor.tokenizer,
         callbacks=[LossPrinterCallback, early_stop_cb], 
     )
-    print("-"*30)
-    print("Initial Evaluation")
-    metric = trainer.evaluate()
-    print(metric)
-    print("-"*30)
+
 
     print("Starting training...")
     trainer.train()

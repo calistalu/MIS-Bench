@@ -12,7 +12,7 @@ from peft import LoraConfig, get_peft_model
 from trl import SFTConfig, SFTTrainer
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 from decord import VideoReader, cpu
-from vision_process import process_vision_info
+from utils.vision_process import process_vision_info
 import subprocess
 import librosa
 from tqdm import tqdm

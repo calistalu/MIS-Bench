@@ -8,7 +8,7 @@ import pandas as pd
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 from decord import VideoReader, cpu
-from vision_process import process_vision_info
+from utils.vision_process import process_vision_info
 import subprocess
 import librosa
 from tqdm import tqdm
@@ -97,16 +97,38 @@ def transcribe_long_audio(audio_path,
 
 def inference_once(model, processor, video_file, prompt, total_pixels, min_pixels):
     path, frames, timestamps = get_video_frames(video_file)
+    path = path.replace('FISclipped', 'data/FIS996')
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": [
             {"type": "text", "text": prompt},
-            {"video": path, "total_pixels": total_pixels, "min_pixels": min_pixels}
+            {"type": "video", "video": path, "total_pixels": total_pixels, "min_pixels": min_pixels}
         ]}
     ]
+    print(messages)
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     image_inputs, video_inputs, video_kwargs = process_vision_info([messages], return_video_kwargs=True)
     fps = video_kwargs['fps']
+
+    print("len(video_frames):", len(video_inputs))
+    print("len(video_inputs):", len(video_inputs))
+    # print("len(fps_list):", len(fps_list))
+
+    
+    # if video_inputs is not None:
+    #     t, c, h, w = video_inputs[0].shape
+    #     print(f"Video tensor shape: T={t}, C={c}, H={h}, W={w}")
+
+    #     # 查看模型 patch size
+    #     ps = processor.feature_extractor.patch_size
+    #     print(f"Processor patch_size: {ps}")
+
+    #     # 计算网格
+    #     p_h, p_w = (ps, ps) if isinstance(ps, int) else ps
+    #     grid_h, grid_w = h // p_h, w // p_w
+    #     print(f"Grid: {grid_h}×{grid_w} patches per frame, total_visual_tokens = T × {grid_h*grid_w}")
+                    
+
     inputs = processor(
         text=[text],
         images=image_inputs,
@@ -127,7 +149,7 @@ def inference_once(model, processor, video_file, prompt, total_pixels, min_pixel
     return result
 
 
-def main(folder='FISclipped', output_csv='fisclipt_scores.csv', prompt_file='prompt.txt'):
+def main(folder='FISclipped', output_csv='data/fisclipt_scores.csv', prompt_file='prompt/prompt.txt'):
     device = "cuda:0"
     # 1) 加载并缓存 Whisper 模型一次
     cache_whisper = './.cache/whisper'
