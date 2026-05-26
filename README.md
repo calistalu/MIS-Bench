@@ -7,6 +7,7 @@ Multimodal large language models (MLLMs) are increasingly used as evaluators, ye
 ![MIS-Bench overview](assets/fisbench_overview.png)
 
 ## Data Release and Privacy
+As the full dataset exceeds GitHub's file size and repository limits, we provide a representative subset containing 10 randomly sampled examples for reproducibility.
 
 In accordance with ethical requirements and participant privacy protection, we do not release the original raw video recordings. Instead, the original recordings are converted into de-identified feature representations across face, audio, and text modalities. This strategy preserves behaviorally meaningful signals for multimodal FIS assessment while removing directly identifiable facial and vocal information.
 

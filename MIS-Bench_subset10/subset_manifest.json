@@ -1,0 +1,27 @@
+{
+  "source_dataset": "/Users/apple/Downloads/MIS-Bench",
+  "created_at": "2026-05-26T16:03:25",
+  "random_seed": 20260526,
+  "sample_count": 10,
+  "sampling_pool_count": 987,
+  "sampling_rule": "Random sample from IDs present in all 5 modality folders, with readable librosa/prosody/text/openface3 and openface3 width 208. audio/wav2vec is copied as-is because every source wav2vec npz currently fails np.load with BadZipFile.",
+  "modalities": [
+    "audio/librosa",
+    "audio/prosody",
+    "audio/wav2vec",
+    "text/words",
+    "video/openface3"
+  ],
+  "sample_ids": [
+    "EH0822_T1_Jessica",
+    "KC0616_T1_Luke",
+    "MD0108_T2_Bethany",
+    "MS0315_T3_Savannah",
+    "NR0802_T1_Luke",
+    "SA1129_T3_Bethany",
+    "SN0216_T2_Savannah",
+    "TK0423_T2_Jessica",
+    "XC0226_T1_Jessica",
+    "XC0226_T3_Lauren"
+  ]
+}
