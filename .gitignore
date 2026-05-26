@@ -8,3 +8,6 @@ output/
 TRACT/
 my_dataset
 data/
+__pycache__/
+*.py[cod]
+.DS_Store
