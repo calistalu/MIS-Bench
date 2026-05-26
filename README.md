@@ -4,7 +4,7 @@
 Multimodal large language models (MLLMs) are increasingly used as evaluators, yet their reliability in expert-based professional assessment remains unclear. We study this challenge through psychotherapeutic interpersonal skill assessment and introduce \textbf{MIS-Bench}, a Multimodal Interpersonal Skills (MIS) benchmark of 996 psychotherapy response videos annotated across eight Facilitative Interpersonal Skills dimensions. Evaluating nine MLLMs across modality and prompting settings, we find that current models remain far from reliable expert agreement, with modest performance, unstable multimodal gains, and limited benefits from reasoning-based prompting. To mitigate this gap, we propose \textbf{MIS-RAFT}, a regression-aware fine-tuning method inspired by RAFT and adapted to continuous one-decimal interpersonal skill scoring. MIS-RAFT addresses the mismatch between autoregressive token prediction and scalar expert scoring, substantially improving alignment with human ratings. Overall, MIS-Bench exposes the gap between general multimodal capability and expert-level interpersonal judgment, while MIS-RAFT offers a promising path toward more reliable model-based assessment.
 
 ## Overview
-![MIS-Bench overview](assets/fisbench_overview.png)
+![MIS-Bench overview](assets/overview.png)
 
 ## Data Release and Privacy
 As the full dataset exceeds GitHub's file size and repository limits, we provide a representative subset containing 10 randomly sampled examples for reproducibility.
